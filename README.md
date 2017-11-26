@@ -2,8 +2,8 @@
 simple app to load hacker-news
 
 
-Guide to generate code coverage
-=======================================
+# Guide to generate code coverage
+
 Note
 =======================================
 Instrumented test will rely on real data from internet, so please make sure the device/emulator have stable internet access when runing instrumented test.
@@ -13,6 +13,7 @@ Instrumented test will rely on real data from internet, so please make sure the 
 
 
 Step 1
+=======================================
 make sure you have a emulator running or a device connecting to the pc
 
 
@@ -20,8 +21,10 @@ make sure you have a emulator running or a device connecting to the pc
 
 
 Step 2
-code coverage can be generated with command line or android studio
 =======================================
+code coverage can be generated with command line or android studio
+
+
 Using command line
 =======================================
 1. go to the project folder
@@ -34,7 +37,8 @@ cd HackerNews
 
 ...............for Windows.........................
 gradlew clean jacocoTestReport
-=======================================
+
+
 Using android studio - command line
 =======================================
 1. open the project with android studio
@@ -46,7 +50,8 @@ Using android studio - command line
 
 ...............for Windows.........................
 gradlew clean jacocoTestReport
-=======================================
+
+
 Using android studio - GUI
 =======================================
 1. open the project with android studio
@@ -58,6 +63,7 @@ Using android studio - GUI
 
 
 Step 3
+=======================================
 The reports are locating in below folders
 Unit test report                             >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\tests\testDebugUnitTest
 Instrumented test report                     >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\androidTests\connected

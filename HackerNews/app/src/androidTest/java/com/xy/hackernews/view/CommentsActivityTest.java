@@ -15,7 +15,9 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static com.xy.hackernews.InstrumentedTestUtil.waitFor;
 import static com.xy.hackernews.view.CommentsActivity.EXT_COMMENT_ID_LIST;
 import static com.xy.hackernews.view.CommentsActivity.EXT_STORY_TITLE;
 import static com.xy.hackernews.view.CommentsActivity.STATE_COMMENTS;
@@ -41,12 +43,14 @@ public class CommentsActivityTest {
     @Test
     public void test_create() throws Exception {
         launchActivity();
+        onView(isRoot()).perform(waitFor(5000));
         onView(withId(R.id.comments_list)).check(new RecyclerViewItemCountGreaterThanAssertion(0));
     }
 
     @Test
     public void test_onSaveInstanceState() {
         launchActivity();
+        onView(isRoot()).perform(waitFor(5000));
         final Bundle outState = new Bundle();
         final CommentsActivity activity = rule.getActivity();
         activity.runOnUiThread(new Runnable() {

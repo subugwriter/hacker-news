@@ -28,14 +28,17 @@ code coverage can be generated with command line or android studio
 Using command line
 =======================================
 1. go to the project folder
+
 cd HackerNews
 
 2. clean and generate test report and code coverage report
 
 ...............for Mac/Linux.......................
+
 ./gradlew clean jacocoTestReport
 
 ...............for Windows.........................
+
 gradlew clean jacocoTestReport
 
 
@@ -46,9 +49,11 @@ Using android studio - command line
 2. open "Terminal" at the buttom, run following command
 
 ...............for Mac/Linux.......................
+
 ./gradlew clean jacocoTestReport
 
 ...............for Windows.........................
+
 gradlew clean jacocoTestReport
 
 
@@ -65,7 +70,11 @@ Using android studio - GUI
 Step 3
 =======================================
 The reports are locating in below folders
+
 Unit test report                             >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\tests\testDebugUnitTest
+
 Instrumented test report                     >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\androidTests\connected
+
 code coverage report(instrument test only)   >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\coverage\debug
+
 code coverage report(overall)                >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\jacoco\jacocoTestReport\html

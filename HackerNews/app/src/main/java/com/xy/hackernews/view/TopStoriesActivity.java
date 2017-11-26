@@ -104,7 +104,7 @@ public class TopStoriesActivity extends BaseActivity {
 
     private void loadData(final int current_page) {
         int startItem;
-        int pageSize = 12;
+        int pageSize = 15;
         startItem = (current_page - 1) * pageSize + 1;
         mCompositeDisposable.add(new StoryManager().getTopStories(startItem, pageSize)
                 .subscribeOn(Schedulers.io()) // "work" on io thread

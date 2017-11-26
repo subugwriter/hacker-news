@@ -49,7 +49,7 @@ public class TopStoriesActivityTest {
     @Test
     public void test_create() throws Exception {
         onView(isRoot()).perform(waitFor(5000));
-        onView(withId(R.id.top_stories_list)).check(new RecyclerViewItemCountAssertion(12));
+        onView(withId(R.id.top_stories_list)).check(new RecyclerViewItemCountAssertion(15));
     }
 
     @Test
@@ -60,14 +60,14 @@ public class TopStoriesActivityTest {
 //        TimerTask task = new TimerTask() {
 //            @Override
 //            public void run() {
-//                onView(withId(R.id.top_stories_list)).check(withItemCount(24));
+//                onView(withId(R.id.top_stories_list)).check(withItemCount(30));
 //            }
 //        };
 //        Timer timer = new Timer();
 //        timer.schedule(task, 10000);
 
 //        onView(withId(R.id.top_stories_list)).perform(waitFor(10000));
-//        onView(withId(R.id.top_stories_list)).check(withItemCount(24));
+//        onView(withId(R.id.top_stories_list)).check(withItemCount(30));
     }
 
     @Test

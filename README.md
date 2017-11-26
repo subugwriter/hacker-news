@@ -61,7 +61,7 @@ Using android studio - GUI
 =======================================
 1. open the project with android studio
 
-2. open the "Gradle projects" panel from the "Gradle" lable at the right side, browse to HaskNews-Tasks-other-jacocoTestReport-double click to run it
+2. open the "Gradle projects" panel from the "Gradle" lable at the right side, browse to HackerNews-Tasks-other-jacocoTestReport-double click to run it
 
 
 
@@ -71,10 +71,10 @@ Step 3
 =======================================
 The reports are locating in below folders
 
-Unit test report                             >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\tests\testDebugUnitTest
+Unit test report                                           >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\tests\testDebugUnitTest
 
-Instrumented test report                     >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\androidTests\connected
+Instrumented test report                                   >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\androidTests\connected
 
-code coverage report(instrument test only)   >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\coverage\debug
+code coverage report(instrument test only--81% coverage)   >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\coverage\debug
 
-code coverage report(overall)                >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\jacoco\jacocoTestReport\html
+code coverage report(overall--83% coverage)                >>>>>>>>>>>>>>>>>>> HackerNews\app\build\reports\jacoco\jacocoTestReport\html

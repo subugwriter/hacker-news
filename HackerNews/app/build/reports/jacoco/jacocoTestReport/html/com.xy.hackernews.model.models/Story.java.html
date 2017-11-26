@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Story.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.xy.hackernews.model.models</a> &gt; <span class="el_source">Story.java</span></div><h1>Story.java</h1><pre class="source lang-java linenums">package com.xy.hackernews.model.models;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+import java.util.List;
+
+/*
+{
+  &quot;by&quot; : &quot;dhouston&quot;,
+  &quot;descendants&quot; : 71,
+  &quot;id&quot; : 8863,
+  &quot;kids&quot; : [ 8952, 9224, 8917, 8884, 8887, 8943, 8869, 8958, 9005, 9671, 8940, 9067, 8908, 9055, 8865, 8881, 8872, 8873, 8955, 10403, 8903, 8928, 9125, 8998, 8901, 8902, 8907, 8894, 8878, 8870, 8980, 8934, 8876 ],
+  &quot;score&quot; : 111,
+  &quot;time&quot; : 1175714200,
+  &quot;title&quot; : &quot;My YC app: Dropbox - Throw away your USB drive&quot;,
+  &quot;type&quot; : &quot;story&quot;,
+  &quot;url&quot; : &quot;http://www.getdropbox.com/u/2/screencast.html&quot;
+}
+*/
+<span class="fc" id="L22">public class Story implements Serializable {</span>
+
+    @SerializedName(&quot;by&quot;)
+    @Expose
+    private String by;
+    @SerializedName(&quot;descendants&quot;)
+    @Expose
+    private Integer descendants;
+    @SerializedName(&quot;id&quot;)
+    @Expose
+    private Integer id;
+<span class="fc" id="L33">    @SerializedName(&quot;kids&quot;)</span>
+    @Expose
+    private List&lt;Integer&gt; kids = null;
+    @SerializedName(&quot;score&quot;)
+    @Expose
+    private Integer score;
+    @SerializedName(&quot;time&quot;)
+    @Expose
+    private Integer time;
+    @SerializedName(&quot;title&quot;)
+    @Expose
+    private String title;
+    @SerializedName(&quot;type&quot;)
+    @Expose
+    private String type;
+    @SerializedName(&quot;url&quot;)
+    @Expose
+    private String url;
+
+    public String getBy() {
+<span class="fc" id="L53">        return by;</span>
+    }
+
+    public void setBy(String by) {
+<span class="nc" id="L57">        this.by = by;</span>
+<span class="nc" id="L58">    }</span>
+
+    public Integer getDescendants() {
+<span class="nc" id="L61">        return descendants;</span>
+    }
+
+    public void setDescendants(Integer descendants) {
+<span class="nc" id="L65">        this.descendants = descendants;</span>
+<span class="nc" id="L66">    }</span>
+
+    public Integer getId() {
+<span class="fc" id="L69">        return id;</span>
+    }
+
+    public void setId(Integer id) {
+<span class="nc" id="L73">        this.id = id;</span>
+<span class="nc" id="L74">    }</span>
+
+    public List&lt;Integer&gt; getKids() {
+<span class="fc" id="L77">        return kids;</span>
+    }
+
+    public void setKids(List&lt;Integer&gt; kids) {
+<span class="nc" id="L81">        this.kids = kids;</span>
+<span class="nc" id="L82">    }</span>
+
+    public Integer getScore() {
+<span class="fc" id="L85">        return score;</span>
+    }
+
+    public void setScore(Integer score) {
+<span class="nc" id="L89">        this.score = score;</span>
+<span class="nc" id="L90">    }</span>
+
+    public Integer getTime() {
+<span class="fc" id="L93">        return time;</span>
+    }
+
+    public void setTime(Integer time) {
+<span class="nc" id="L97">        this.time = time;</span>
+<span class="nc" id="L98">    }</span>
+
+    public String getTitle() {
+<span class="fc" id="L101">        return title;</span>
+    }
+
+    public void setTitle(String title) {
+<span class="nc" id="L105">        this.title = title;</span>
+<span class="nc" id="L106">    }</span>
+
+    public String getType() {
+<span class="fc" id="L109">        return type;</span>
+    }
+
+    public void setType(String type) {
+<span class="nc" id="L113">        this.type = type;</span>
+<span class="nc" id="L114">    }</span>
+
+    public String getUrl() {
+<span class="fc" id="L117">        return url;</span>
+    }
+
+    public void setUrl(String url) {
+<span class="nc" id="L121">        this.url = url;</span>
+<span class="nc" id="L122">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

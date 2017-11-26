@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StoryManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.xy.hackernews.controller</a> &gt; <span class="el_source">StoryManager.java</span></div><h1>StoryManager.java</h1><pre class="source lang-java linenums">package com.xy.hackernews.controller;
+
+import com.xy.hackernews.model.http.ServiceFactory;
+import com.xy.hackernews.model.models.Story;
+
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Single;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
+
+/**
+ * Created by xy on 25/11/2017.
+ */
+//manager class to handle all application logic, including data computation, DB and internet interaction, and cache runtime data.
+public class StoryManager/* implements StoryManagerInterface*/ {
+<span class="fc" id="L19">    public static final String TAG = StoryManager.class.getSimpleName();</span>
+
+<span class="fc" id="L21">    public StoryManager() {</span>
+<span class="fc" id="L22">    }</span>
+
+    /*
+     * get top stories
+     */
+    public Observable&lt;List&lt;Story&gt;&gt; getTopStories(final int start, final int count) {
+<span class="fc" id="L28">        return ServiceFactory.getHackerNewsService().getTopStoryIds()</span>
+<span class="fc" id="L29">                .flatMapObservable(new Function&lt;List&lt;Integer&gt;, ObservableSource&lt;Story&gt;&gt;() {</span>
+                    @Override
+                    public ObservableSource&lt;Story&gt; apply(List&lt;Integer&gt; storyIds) throws Exception {
+<span class="fc" id="L32">                        return Observable.fromIterable(storyIds)</span>
+<span class="fc" id="L33">                                .skip(start - 1)</span>
+<span class="fc" id="L34">                                .take(count)</span>
+<span class="fc" id="L35">                                .concatMapEager(new Function&lt;Integer, ObservableSource&lt;Story&gt;&gt;() {</span>
+                                    @Override
+                                    public ObservableSource&lt;Story&gt; apply(Integer storyId) throws Exception {
+<span class="fc" id="L38">                                        return getStoryContent(storyId);</span>
+                                    }
+                                });
+                    }
+                })
+<span class="fc" id="L43">                .filter(new Predicate&lt;Story&gt;() {</span>
+                    @Override
+                    public boolean test(Story story) throws Exception {
+<span class="fc" id="L46">                        return story.getType().equals(&quot;story&quot;);</span>
+                    }
+                })
+<span class="fc" id="L49">                .toList()</span>
+<span class="fc" id="L50">                .toObservable();</span>
+    }
+
+    /*
+    get story content
+     */
+    public Observable&lt;Story&gt; getStoryContent(final int storyId) {
+<span class="fc" id="L57">        Single&lt;Story&gt; obj = ServiceFactory.getHackerNewsService().getStoryContent(storyId);</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (obj != null) {</span>
+<span class="fc" id="L59">            return obj.toObservable().cast(Story.class);</span>
+        } else {
+<span class="fc" id="L61">            return null;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

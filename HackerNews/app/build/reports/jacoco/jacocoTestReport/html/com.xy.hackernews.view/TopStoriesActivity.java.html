@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TopStoriesActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.xy.hackernews.view</a> &gt; <span class="el_source">TopStoriesActivity.java</span></div><h1>TopStoriesActivity.java</h1><pre class="source lang-java linenums">package com.xy.hackernews.view;
+
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.xy.hackernews.R;
+import com.xy.hackernews.controller.StoryManager;
+import com.xy.hackernews.core.BaseActivity;
+import com.xy.hackernews.core.StateManager;
+import com.xy.hackernews.model.models.Story;
+import com.xy.hackernews.view.widget.EndlessRecyclerOnScrollListener;
+
+import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
+/**
+ * Created by xy on 25/11/2017.
+ */
+<span class="fc" id="L28">public class TopStoriesActivity extends BaseActivity {</span>
+    public static final String STATE_TOP_STORIES = &quot;STATE_TOP_STORIES&quot;;
+
+<span class="fc" id="L31">    private EndlessRecyclerOnScrollListener mScrollListener = null;</span>
+<span class="fc" id="L32">    private SwipeRefreshLayout mSwipeRefreshLayout = null;</span>
+<span class="fc" id="L33">    private RecyclerView mRecyclerView = null;</span>
+<span class="fc" id="L34">    private TopStoriesListAdapter mTopStoriesListAdapter = null;</span>
+
+    //cached data
+<span class="fc" id="L37">    StateManager&lt;List&lt;Story&gt;&gt; mTopStories = new StateManager&lt;List&lt;Story&gt;&gt;(STATE_TOP_STORIES);</span>
+    /**
+     * Collects all subscriptions to unsubscribe later
+     */
+<span class="fc" id="L41">    @NonNull</span>
+    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+<span class="fc" id="L46">        super.onSaveInstanceState(outState);</span>
+        //StoryManager.getInstance().onSaveInstanceState(outState);
+<span class="fc" id="L48">        mTopStories.saveState(outState);</span>
+<span class="fc" id="L49">    }</span>
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L53">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L54">        setContentView(R.layout.activity_top_stories);</span>
+
+<span class="fc" id="L56">        mRecyclerView = (RecyclerView) findViewById(R.id.top_stories_list);</span>
+<span class="fc" id="L57">        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);</span>
+<span class="fc" id="L58">        mRecyclerView.setLayoutManager(linearLayoutManager);</span>
+
+        // specify an adapter
+<span class="fc" id="L61">        mTopStoriesListAdapter = new TopStoriesListAdapter(this);</span>
+<span class="fc" id="L62">        mRecyclerView.setAdapter(mTopStoriesListAdapter);</span>
+
+        // enable pull up for endless loading
+<span class="fc" id="L65">        mScrollListener = new EndlessRecyclerOnScrollListener(linearLayoutManager) {</span>
+            @Override
+            public void onLoadMore(int current_page) {
+                // load more
+<span class="nc" id="L69">                loadData(current_page);</span>
+<span class="nc" id="L70">            }</span>
+        };
+<span class="fc" id="L72">        mRecyclerView.addOnScrollListener(mScrollListener);</span>
+
+        // enable pull down to refresh
+<span class="fc" id="L75">        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.top_stories_swipe_refresh);</span>
+<span class="fc" id="L76">        final SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {</span>
+            @Override
+            public void onRefresh() {
+                // load 1st page
+<span class="fc" id="L80">                loadData(1);</span>
+<span class="fc" id="L81">            }</span>
+        };
+<span class="fc" id="L83">        mSwipeRefreshLayout.setOnRefreshListener(onRefreshListener);</span>
+
+<span class="fc" id="L85">        List&lt;Story&gt; topStories = mTopStories.restoreState(savedInstanceState);</span>
+<span class="pc bpc" id="L86" title="3 of 4 branches missed.">        if (topStories != null &amp;&amp; topStories.size() &gt; 0) {</span>
+<span class="nc" id="L87">            mTopStoriesListAdapter.setData(topStories);</span>
+        } else {
+            ;
+<span class="fc" id="L90">            mSwipeRefreshLayout.post(new Runnable() {</span>
+                @Override
+                public void run() {
+<span class="fc" id="L93">                    mSwipeRefreshLayout.setRefreshing(true);</span>
+                    // directly call onRefresh() method
+<span class="fc" id="L95">                    onRefreshListener.onRefresh();</span>
+<span class="fc" id="L96">                }</span>
+            });
+        }
+<span class="fc" id="L99">    }</span>
+
+//    protected StoryManagerInterface getManager(){
+//        return new StoryManager();
+//    }
+
+    private void loadData(final int current_page) {
+        int startItem;
+<span class="fc" id="L107">        int pageSize = 12;</span>
+<span class="fc" id="L108">        startItem = (current_page - 1) * pageSize + 1;</span>
+<span class="fc" id="L109">        mCompositeDisposable.add(new StoryManager().getTopStories(startItem, pageSize)</span>
+<span class="fc" id="L110">                .subscribeOn(Schedulers.io()) // &quot;work&quot; on io thread</span>
+<span class="fc" id="L111">                .observeOn(AndroidSchedulers.mainThread()) // &quot;listen&quot; on UIThread</span>
+<span class="fc" id="L112">                .subscribe(new Consumer&lt;List&lt;Story&gt;&gt;() {</span>
+                    @Override
+                    public void accept(final List&lt;Story&gt; topStories) throws Exception {
+                        //update list
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">                        if (current_page == 1) {</span>
+<span class="fc" id="L117">                            mTopStoriesListAdapter.setData(topStories);</span>
+<span class="fc" id="L118">                            mTopStories.setState(topStories);</span>
+                        } else {
+<span class="nc" id="L120">                            mTopStoriesListAdapter.addData(topStories);</span>
+<span class="nc" id="L121">                            mTopStories.setState(mTopStoriesListAdapter.getData());</span>
+                        }
+                        // after refresh is done, remember to call the following code
+<span class="pc bpc" id="L124" title="2 of 4 branches missed.">                        if (mSwipeRefreshLayout != null &amp;&amp; mSwipeRefreshLayout.isRefreshing()) {</span>
+<span class="fc" id="L125">                            mSwipeRefreshLayout.setRefreshing(false);  // This hides the spinner</span>
+                        }
+<span class="fc" id="L127">                        mScrollListener.setLoading(false);</span>
+<span class="fc" id="L128">                    }</span>
+<span class="fc" id="L129">                }, new Consumer&lt;Throwable&gt;() {</span>
+                    @Override
+                    public void accept(Throwable throwable) /*throws Exception*/ {
+                        //show error
+<span class="nc" id="L133">                        Toast.makeText(TopStoriesActivity.this, getString(R.string.loading_error), Toast.LENGTH_LONG).show();</span>
+                        // after refresh is done, remember to call the following code
+<span class="nc bnc" id="L135" title="All 4 branches missed.">                        if (mSwipeRefreshLayout != null &amp;&amp; mSwipeRefreshLayout.isRefreshing()) {</span>
+<span class="nc" id="L136">                            mSwipeRefreshLayout.setRefreshing(false);  // This hides the spinner</span>
+                        }
+<span class="nc" id="L138">                        mScrollListener.setLoading(false);</span>
+<span class="nc" id="L139">                    }</span>
+                })
+        );
+<span class="fc" id="L142">    }</span>
+
+    @Override
+    protected void onDestroy() {
+        // DO NOT CALL .dispose()
+<span class="fc" id="L147">        mCompositeDisposable.clear();</span>
+<span class="fc" id="L148">        super.onDestroy();</span>
+<span class="fc" id="L149">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

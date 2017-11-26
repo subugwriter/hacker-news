@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ServiceFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.xy.hackernews.model.http</a> &gt; <span class="el_source">ServiceFactory.java</span></div><h1>ServiceFactory.java</h1><pre class="source lang-java linenums">package com.xy.hackernews.model.http;
+
+import android.util.Log;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+/**
+ * Created by xy on 25/11/2017.
+ */
+<span class="nc" id="L14">public class ServiceFactory {</span>
+
+    private static HackerNewsService mHackerNewsService;
+
+    private static synchronized HackerNewsService initInstance() {
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        if (mHackerNewsService == null) {</span>
+<span class="fc" id="L20">            final Retrofit retrofit = createRetrofit(HackerNewsService.BASE_URL);</span>
+<span class="fc" id="L21">            mHackerNewsService = retrofit.create(HackerNewsService.class);</span>
+        }
+<span class="fc" id="L23">        return mHackerNewsService;</span>
+    }
+
+    /**
+     * The HackerNewsService communicates with the Hacker News APIs.
+     */
+    public static HackerNewsService getHackerNewsService() {
+<span class="fc" id="L30">        return initInstance();</span>
+    }
+
+    /**
+     * Creates a retrofit
+     *
+     * @param baseUrl REST base url
+     * @return retrofit service with defined base url
+     */
+    private static Retrofit createRetrofit(final String baseUrl) {
+<span class="fc" id="L40">        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {</span>
+            @Override
+            public void log(String message) {
+                //Log.d(&quot;HTTP&quot;, message);
+<span class="fc" id="L44">            }</span>
+        });
+<span class="fc" id="L46">        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);</span>
+<span class="fc" id="L47">        OkHttpClient okHttpClient = new OkHttpClient.Builder()</span>
+<span class="fc" id="L48">                .addInterceptor(httpLoggingInterceptor)</span>
+<span class="fc" id="L49">                .build();</span>
+
+<span class="fc" id="L51">        return new Retrofit.Builder()</span>
+<span class="fc" id="L52">                .baseUrl(baseUrl)</span>
+<span class="fc" id="L53">                .addConverterFactory(GsonConverterFactory.create())</span>
+<span class="fc" id="L54">                .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) // &lt;- add this</span>
+<span class="fc" id="L55">                .client(okHttpClient)</span>
+<span class="fc" id="L56">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

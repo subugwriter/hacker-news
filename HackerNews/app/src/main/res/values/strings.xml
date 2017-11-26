@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Hacker News</string>
+    <string name="loading_error">Loading error! Please make sure you are connecting to internet, and try again later.</string>
+</resources>

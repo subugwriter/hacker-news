@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TopStoriesListAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.xy.hackernews.view</a> &gt; <span class="el_source">TopStoriesListAdapter.java</span></div><h1>TopStoriesListAdapter.java</h1><pre class="source lang-java linenums">package com.xy.hackernews.view;
+
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
+import android.util.SparseArray;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.xy.hackernews.R;
+import com.xy.hackernews.model.models.Story;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Created by xy on 25/11/2017.
+ */
+public class TopStoriesListAdapter extends RecyclerView.Adapter&lt;TopStoriesListAdapter.ViewHolder&gt; {
+
+<span class="fc" id="L26">    private ArrayList&lt;Story&gt; mTopStoriesArray = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L27">    private SparseArray&lt;Story&gt; mTopStoriesMap = new SparseArray&lt;&gt;();</span>
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        TextView mNumber;
+        View mStory;
+        TextView mTitle;
+        TextView mDetail;
+        TextView mComments;
+
+<span class="fc" id="L36">        public ViewHolder(View view) {</span>
+<span class="fc" id="L37">            super(view);</span>
+<span class="fc" id="L38">            mNumber = (TextView) view.findViewById(R.id.number);</span>
+<span class="fc" id="L39">            mStory = view.findViewById(R.id.story);</span>
+<span class="fc" id="L40">            mTitle = (TextView) view.findViewById(R.id.title);</span>
+<span class="fc" id="L41">            mDetail = (TextView) view.findViewById(R.id.details);</span>
+<span class="fc" id="L42">            mComments = (TextView) view.findViewById(R.id.comments);</span>
+<span class="fc" id="L43">        }</span>
+    }
+
+<span class="fc" id="L46">    private Context mContext = null;</span>
+
+<span class="fc" id="L48">    public TopStoriesListAdapter(Context context) {</span>
+<span class="fc" id="L49">        mContext = context;</span>
+<span class="fc" id="L50">    }</span>
+
+    /*
+    reset data of the list
+     */
+    public void setData(List&lt;Story&gt; topStories) {
+<span class="fc" id="L56">        mTopStoriesMap.clear();</span>
+<span class="fc" id="L57">        mTopStoriesArray.clear();</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        for (Story currentStory : topStories) {</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">            if (currentStory != null) {</span>
+<span class="fc" id="L60">                Story story = mTopStoriesMap.get(currentStory.getId());</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                if (story != null) {</span>
+<span class="nc" id="L62">                    mTopStoriesMap.remove(currentStory.getId());</span>
+<span class="nc" id="L63">                    mTopStoriesArray.remove(story);</span>
+                }
+
+<span class="fc" id="L66">                mTopStoriesMap.put(currentStory.getId(), currentStory);</span>
+<span class="fc" id="L67">                mTopStoriesArray.add(currentStory);</span>
+            }
+<span class="fc" id="L69">        }</span>
+
+<span class="fc" id="L71">        notifyDataSetChanged();</span>
+<span class="fc" id="L72">    }</span>
+
+    /*
+    add data at the end of list
+     */
+    public void addData(List&lt;Story&gt; topStories) {
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        for (Story currentStory : topStories) {</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            if (currentStory != null) {</span>
+<span class="nc" id="L80">                Story story = mTopStoriesMap.get(currentStory.getId());</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                if (story == null) {</span>
+<span class="nc" id="L82">                    mTopStoriesMap.put(currentStory.getId(), currentStory);</span>
+<span class="nc" id="L83">                    mTopStoriesArray.add(currentStory);</span>
+                }
+
+            }
+<span class="nc" id="L87">        }</span>
+
+<span class="nc" id="L89">        notifyDataSetChanged();</span>
+<span class="nc" id="L90">    }</span>
+
+    public List&lt;Story&gt; getData() {
+<span class="nc" id="L93">        return mTopStoriesArray;</span>
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // create a new view
+<span class="fc" id="L99">        View view = LayoutInflater.from(parent.getContext())</span>
+<span class="fc" id="L100">                .inflate(R.layout.list_item_story, parent, false);</span>
+<span class="fc" id="L101">        ViewHolder viewHolder = new ViewHolder(view);</span>
+<span class="fc" id="L102">        return viewHolder;</span>
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+<span class="fc" id="L107">        final Story story = mTopStoriesArray.get(position);</span>
+<span class="fc" id="L108">        holder.mNumber.setText(String.valueOf(position + 1));</span>
+<span class="fc" id="L109">        holder.mTitle.setText(story.getTitle());</span>
+<span class="fc" id="L110">        String timeSpan = DateUtils.getRelativeTimeSpanString(TimeUnit.SECONDS.toMillis(story.getTime())).toString();</span>
+<span class="fc" id="L111">        holder.mDetail.setText(story.getScore() + &quot; points by &quot; + story.getBy() + &quot; &quot; + timeSpan);</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        holder.mComments.setText((story.getKids() == null ? 0 : story.getKids().size()) + &quot; comments&quot;);</span>
+
+        //open url when story is clicked
+<span class="fc" id="L115">        holder.mStory.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="fc" id="L118">                String url = story.getUrl();</span>
+<span class="fc" id="L119">                Intent intent = new Intent(Intent.ACTION_VIEW);</span>
+<span class="fc" id="L120">                intent.setData(Uri.parse(url));</span>
+<span class="fc" id="L121">                mContext.startActivity(intent);</span>
+<span class="fc" id="L122">            }</span>
+        });
+        //go to comments page when comments text is clicked
+<span class="fc" id="L125">        holder.mComments.setOnClickListener(new View.OnClickListener() {//TODO</span>
+            @Override
+            public void onClick(View v) {
+<span class="pc bpc" id="L128" title="2 of 4 branches missed.">                if ((story.getKids() != null) &amp;&amp; (story.getKids().size() &gt; 0)) {</span>
+                    //only go to command page when there are commands
+<span class="fc" id="L130">                    CommentsActivity.startWithTitleAndCommentIds(mContext, story.getTitle(), story.getKids());</span>
+                }
+<span class="fc" id="L132">            }</span>
+        });
+<span class="fc" id="L134">    }</span>
+
+    @Override
+    public int getItemCount() {
+<span class="fc" id="L138">        return mTopStoriesArray.size();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

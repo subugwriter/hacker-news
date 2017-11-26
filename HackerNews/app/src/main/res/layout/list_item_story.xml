@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <RelativeLayout
+        android:id="@+id/list_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBackgroundGrey"
+        android:layout_margin="10dp">
+        <TextView
+            android:id="@+id/number"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            android:text="1"
+            android:textColor="@color/colorTextBlack"/>
+        <TextView
+            android:id="@+id/comments"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textAlignment="center"
+            android:background="@color/colorPrimary"
+            android:padding="2dp"
+            android:text="50 comments"
+            android:textColor="@color/colorTextBlack"/>
+        <LinearLayout
+            android:id="@+id/story"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/number"
+            android:layout_toLeftOf="@id/comments"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="title title"
+                android:textColor="@color/colorTextBlack"/>
+            <TextView
+                android:id="@+id/details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="detail details"
+                android:textColor="@color/colorTextGrey"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

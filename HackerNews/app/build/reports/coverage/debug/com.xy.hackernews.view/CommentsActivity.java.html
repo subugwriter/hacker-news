@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CommentsActivity.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debugAndroidTest</a> &gt; <a href="index.source.html" class="el_package">com.xy.hackernews.view</a> &gt; <span class="el_source">CommentsActivity.java</span></div><h1>CommentsActivity.java</h1><pre class="source lang-java linenums">package com.xy.hackernews.view;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.xy.hackernews.R;
+import com.xy.hackernews.controller.CommentManager;
+import com.xy.hackernews.core.BaseActivity;
+import com.xy.hackernews.core.StateManager;
+import com.xy.hackernews.model.models.Comment;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
+/**
+ * Created by xy on 25/11/2017.
+ */
+<span class="fc" id="L30">public class CommentsActivity extends BaseActivity {</span>
+
+    public static final String EXT_STORY_TITLE = &quot;EXT_STORY_TITLE&quot;;
+    public static final String EXT_COMMENT_ID_LIST = &quot;EXT_COMMENT_ID_LIST&quot;;
+
+    public static final String STATE_COMMENTS = &quot;STATE_COMMENTS&quot;;
+
+    //private EndlessRecyclerOnScrollListener mScrollListener = null;
+<span class="fc" id="L38">    private SwipeRefreshLayout mSwipeRefreshLayout = null;</span>
+<span class="fc" id="L39">    private RecyclerView mRecyclerView = null;</span>
+<span class="fc" id="L40">    private CommentsListAdapter mCommentsListAdapter = null;</span>
+
+<span class="fc" id="L42">    ArrayList&lt;Integer&gt; mCommentIds = new ArrayList&lt;&gt;();</span>
+
+    //cached data
+<span class="fc" id="L45">    StateManager&lt;List&lt;Comment&gt;&gt; mComments = new StateManager&lt;List&lt;Comment&gt;&gt;(STATE_COMMENTS);</span>
+    /**
+     * Collects all subscriptions to unsubscribe later
+     */
+<span class="fc" id="L49">    @NonNull</span>
+    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+
+
+    public static void startWithTitleAndCommentIds(Context context, String title, List&lt;Integer&gt; commentIds) {
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if (context != null) {</span>
+<span class="fc" id="L55">            Intent intent = new Intent(context, CommentsActivity.class);</span>
+<span class="fc" id="L56">            intent.putExtra(EXT_STORY_TITLE, title);</span>
+<span class="fc" id="L57">            intent.putExtra(EXT_COMMENT_ID_LIST, new ArrayList&lt;&gt;(commentIds));</span>
+<span class="fc" id="L58">            context.startActivity(intent);</span>
+        }
+<span class="fc" id="L60">    }</span>
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+<span class="fc" id="L64">        super.onSaveInstanceState(outState);</span>
+        //StoryManager.getInstance().onSaveInstanceState(outState);
+<span class="fc" id="L66">        mComments.saveState(outState);</span>
+<span class="fc" id="L67">    }</span>
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L71">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L72">        setContentView(R.layout.activity_comments);</span>
+
+<span class="fc" id="L74">        String title = getIntent().getStringExtra(EXT_STORY_TITLE);</span>
+<span class="fc" id="L75">        mCommentIds = (ArrayList&lt;Integer&gt;) getIntent().getSerializableExtra(EXT_COMMENT_ID_LIST);</span>
+
+        //set title
+<span class="fc" id="L78">        getSupportActionBar().setTitle(title);</span>
+
+<span class="fc" id="L80">        mRecyclerView = (RecyclerView) findViewById(R.id.comments_list);</span>
+<span class="fc" id="L81">        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);</span>
+<span class="fc" id="L82">        mRecyclerView.setLayoutManager(linearLayoutManager);</span>
+
+        // specify an adapter
+<span class="fc" id="L85">        mCommentsListAdapter = new CommentsListAdapter();</span>
+<span class="fc" id="L86">        mRecyclerView.setAdapter(mCommentsListAdapter);</span>
+
+        // enable pull down to refresh
+<span class="fc" id="L89">        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.comments_swipe_refresh);</span>
+<span class="fc" id="L90">        final SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {</span>
+            @Override
+            public void onRefresh() {
+                // load data. Always load all the commands at one time since number of commands are relatively small
+<span class="fc" id="L94">                loadData();</span>
+<span class="fc" id="L95">            }</span>
+        };
+<span class="fc" id="L97">        mSwipeRefreshLayout.setOnRefreshListener(onRefreshListener);</span>
+
+<span class="fc" id="L99">        List&lt;Comment&gt; comments = mComments.restoreState(savedInstanceState);</span>
+<span class="pc bpc" id="L100" title="3 of 4 branches missed.">        if (comments != null &amp;&amp; comments.size() &gt; 0) {</span>
+<span class="nc" id="L101">            mCommentsListAdapter.setData(comments);</span>
+        } else {
+<span class="fc" id="L103">            mSwipeRefreshLayout.post(new Runnable() {</span>
+                @Override
+                public void run() {
+<span class="fc" id="L106">                    mSwipeRefreshLayout.setRefreshing(true);</span>
+                    // directly call onRefresh() method
+<span class="fc" id="L108">                    onRefreshListener.onRefresh();</span>
+<span class="fc" id="L109">                }</span>
+            });
+        }
+<span class="fc" id="L112">    }</span>
+
+
+//    protected CommentManagerInterface getManager(){
+//        return new CommentManager();
+//    }
+
+    private void loadData() {
+<span class="fc" id="L120">        mCompositeDisposable.add(new CommentManager().getComments(mCommentIds)</span>
+<span class="fc" id="L121">                .subscribeOn(Schedulers.io()) // &quot;work&quot; on io thread</span>
+<span class="fc" id="L122">                .observeOn(AndroidSchedulers.mainThread()) // &quot;listen&quot; on UIThread</span>
+<span class="fc" id="L123">                .subscribe(new Consumer&lt;List&lt;Comment&gt;&gt;() {</span>
+                    @Override
+                    public void accept(
+                                            /*@io.reactivex.annotations.NonNull*/ final List&lt;Comment&gt; comments)//TODO
+                            throws Exception {
+                        //update list
+<span class="fc" id="L129">                        mCommentsListAdapter.setData(comments);</span>
+<span class="fc" id="L130">                        mComments.setState(comments);</span>
+                        // after refresh is done, remember to call the following code
+<span class="pc bpc" id="L132" title="2 of 4 branches missed.">                        if (mSwipeRefreshLayout != null &amp;&amp; mSwipeRefreshLayout.isRefreshing()) {</span>
+<span class="fc" id="L133">                            mSwipeRefreshLayout.setRefreshing(false);  // This hides the spinner</span>
+                        }
+<span class="fc" id="L135">                    }</span>
+<span class="fc" id="L136">                }, new Consumer&lt;Throwable&gt;() {</span>
+                    @Override
+                    public void accept(Throwable throwable) /*throws Exception*/ {
+                        //show error
+<span class="nc" id="L140">                        Toast.makeText(CommentsActivity.this, getString(R.string.loading_error), Toast.LENGTH_LONG).show();</span>
+                        // after refresh is done, remember to call the following code
+<span class="nc bnc" id="L142" title="All 4 branches missed.">                        if (mSwipeRefreshLayout != null &amp;&amp; mSwipeRefreshLayout.isRefreshing()) {</span>
+<span class="nc" id="L143">                            mSwipeRefreshLayout.setRefreshing(false);  // This hides the spinner</span>
+                        }
+<span class="nc" id="L145">                    }</span>
+                })
+        );
+<span class="fc" id="L148">    }</span>
+
+    @Override
+    protected void onDestroy() {
+        // DO NOT CALL .dispose()
+<span class="fc" id="L153">        mCompositeDisposable.clear();</span>
+<span class="fc" id="L154">        super.onDestroy();</span>
+<span class="fc" id="L155">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span>Generated by the Android Gradle plugin 2.3.3</div></body></html>
